@@ -1,12 +1,13 @@
 import React from 'react'
 import { useState } from "react";
 
+import { Link } from "react-router"
 import { IconPlus, IconMenu2 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button'
 
 const Sidebar = () => {
 
-    const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <div
@@ -29,7 +30,9 @@ const Sidebar = () => {
           <div className="flex justify-center items-center space-x-2">
             <span className="font-medium">Add Attempt</span>
             <Button size="icon" variant="secondary">
-              <IconPlus />
+              <Link to="/create">
+                <IconPlus />
+              </Link>
             </Button>
           </div>
         </div>
@@ -41,9 +44,8 @@ const Sidebar = () => {
         {Array.from({ length: 20 }).map((_, idx) => (
           <div
             key={idx}
-            className={`p-2 bg-gray-100 rounded mb-2 ${
-              collapsed ? "text-center" : ""
-            }`}
+            className={`p-2 bg-gray-100 rounded mb-2 ${collapsed ? "text-center" : ""
+              }`}
           >
             {!collapsed ? `Item ${idx + 1}` : idx + 1}
           </div>

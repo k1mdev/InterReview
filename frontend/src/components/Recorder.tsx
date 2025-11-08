@@ -60,33 +60,33 @@ export default function Recorder() {
 
       {isRecording ? (
         <Button
-            size="icon"
-            variant="secondary"
-            onClick={stopRecording}
+          size="icon"
+          variant="secondary"
+          onClick={stopRecording}
         >
           <IconPlayerStop />
         </Button>
       ) : (
-        <>
-            <span className="text-sm p-1">Record Your Response</span>
-            <Button
-                size="icon"
-                variant="secondary"
-                onClick={startRecording}
-            >
+        <div className='flex items-center'>
+          <span className="text-sm p-1">Record Your Response</span>
+          <Button
+            size="icon"
+            variant="secondary"
+            onClick={startRecording}
+          >
             <IconMicrophone />
-            </Button>
-        </>
+          </Button>
+        </div>
       )}
 
       {recordedURL && (
         <>
-            <audio className='p-2' controls src={recordedURL} />
-            <Button size="icon" variant="secondary">
-              Submit
-            </Button>
+          <audio className='p-2' controls src={recordedURL} />
+          <Button size="icon" variant="secondary">
+            Submit
+          </Button>
         </>
-        )}
+      )}
 
     </div>
   );
