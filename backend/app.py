@@ -52,7 +52,17 @@ def attempt():
             # save attempt to DB
             db_service.save_attempt(_uuid, question, answer, feedback, user_id, timestamp)
 
-            return jsonify({'status': 'success'}), 200
+            data = {
+                "attempt_id": attempt_id,
+                "question": question,
+                "answer": answer,
+                "answer": feedback,
+                "user_id": user_id,
+                "created": timestamp,
+                "audio": s3_service.get_audio(attempt_id, user_id)
+            }
+
+            return jsonify({'status': 'success', 'data': data}), 200
         except Exception as e:
             return jsonify({'status': 'error', 'message': f'Error saving to DB: {e}'}), 500
 
