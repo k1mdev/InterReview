@@ -9,10 +9,11 @@ def upload_audio(file, uuid, user_id):
     Saves audio clip to bucket.
 
     Parameters:
+        file (FileStorage): The audio clip.
         uuid (UUID): The UUID of the audio file.
         user_id (str): The user ID who generated this recording.
     """
-    s3.upload_file(
+    s3.upload_fileobj(
         Fileobj=file,
         Bucket=BUCKET_NAME,
         Key=f"{user_id}/{uuid}" 

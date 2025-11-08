@@ -25,7 +25,7 @@ def attempt():
             timestamp = datetime.now(timezone.utc)
 
             # validate file type is mp3 or wav
-            file = request.files.get('audio')
+            file = request.files.get('file')
             kind = filetype.guess(file.read(261)) 
             file.seek(0)
             if not kind or not kind.mime in ['mp3', 'wav']:
@@ -40,7 +40,7 @@ def attempt():
             user_id = request.form.get('user_id')
 
             # save to bucket
-            s3_service.upload_audio(_uuid, user_id)
+            s3_service.upload_audio(file, _uuid, user_id)
 
             # identify the user's answer as text and Gemini's feeback as JSON
             answer = analysis.transcript
