@@ -6,7 +6,7 @@ import { Link } from "react-router"
 const Sidebar = () => {
   return (
     <div
-      className="fixed top-0 left-0 h-screen flex flex-col w-[17vw] transition-all duration-300 bg-white shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1)]"
+      className="h-screen flex flex-col w-[17vw] transition-all duration-300 bg-white shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1)]"
     >
       {/* Header */}
       <div className="shrink-0 p-4 border-b border-gray-200 flex items-center justify-between">
