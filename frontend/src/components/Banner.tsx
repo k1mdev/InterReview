@@ -3,7 +3,7 @@ import React from 'react'
 const Banner = () => {
   return (
     <>
-        <div className='fixed top-0 left-1/2 -translate-x-1/2 p-4 flex flex-col'>
+        <div className='bg-red-400 p-4 flex flex-col items-center'>
             <span className='text-4xl'>InterReview</span>
             <span className='text-l'>Powered by Gemini</span>
         </div>
