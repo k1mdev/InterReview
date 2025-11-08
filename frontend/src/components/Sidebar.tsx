@@ -1,6 +1,7 @@
 import React from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
+import { Link } from "react-router"
 
 const Sidebar = () => {
   return (
@@ -17,7 +18,9 @@ const Sidebar = () => {
         <div className="flex justify-center items-center space-x-2">
           <span className="font-medium">Add Attempt</span>
           <Button size="icon" variant="secondary">
-            <IconPlus />
+            <Link to="/create">
+              <IconPlus />
+            </Link>
           </Button>
         </div>
       </div>
