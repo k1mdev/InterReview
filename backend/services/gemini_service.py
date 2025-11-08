@@ -1,10 +1,22 @@
 from dotenv import load_dotenv
+from pathlib import Path
 import os
+from google import genai
 
-# Load variables from .env
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env")
 
-# Access the Gemini key
 api_key = os.getenv("GEMINI_API_KEY")
 
-print("Gemini key loaded:", bool(api_key))  # Optional sanity check
+client = genai.Client()
+myfile = client.files.upload(file='/Users/jimmyjiang/Documents/Projects/InterReview/backend/test.mp3')
+prompt = 'Generate a transcript of the speech.'
+
+response = client.models.generate_content(
+  model='gemini-2.5-flash',
+  contents=[prompt, myfile]
+)
+
+print(response.text)
+
+
+
