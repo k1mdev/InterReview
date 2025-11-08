@@ -68,7 +68,7 @@ export default function Recorder() {
           </Button>
         </div>
       ) : (
-        <div className='flex items-center'>
+        <div className='flex items-center justify-center'>
           <Button
             variant="secondary"
             onClick={startRecording}
