@@ -20,7 +20,7 @@ function App() {
             <Route path='/logIn' element={<Login />} />
             <Route path='/signUp' element={<SignUp />} />
             <Route path='/create' element={<ProtectedRoute><CreateAttempt /></ProtectedRoute>} />
-            <Route path='/analysis' element={<ProtectedRoute><Analysis /></ProtectedRoute>} />
+            <Route path='/analysis/:attemptId' element={<ProtectedRoute><Analysis /></ProtectedRoute>} />
           </Routes>
         </AuthProvider>
       </div>
