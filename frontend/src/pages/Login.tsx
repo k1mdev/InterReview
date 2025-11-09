@@ -24,44 +24,45 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen w-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <form className="flex flex-col space-y-4" onSubmit={handleLogin}>
-            <h2 className="text-3xl font-extrabold text-center">Log In</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+        <form className="flex flex-col" onSubmit={handleLogin}>
+          <h2 className="text-3xl font-extrabold text-center mb-4">Log In</h2>
 
-            <div className="flex flex-col space-y-1">
-                <label className="font-medium text-left">Email</label>
-                <input
-                type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-            </div>
+          <div className="mb-4">
+            <label className="block font-medium mb-1 text-left">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-            <div className="flex flex-col space-y-1">
-                <label className="font-medium text-left">Password</label>
-                <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-            </div>
+          <div className="mb-4">
+            <label className="block font-medium mb-1 text-left">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-            <button
-                type="submit"
-                disabled={isLoading}
-                className={`flex items-center justify-center rounded-md text-white font-medium text-sm py-2.5 px-6 self-center transition-all
-                ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-            >
-                {isLoading ? 'Loading...' : 'Log In'}
-            </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`flex items-center justify-center w-auto self-center bg-blue-600 text-white font-medium text-sm py-2.5 px-6 rounded-md transition duration-200 ${
+              isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'
+            }`}
+          >
+            {isLoading ? 'Loading...' : 'Log In'}
+          </button>
 
           {error && (
-            <p className="text-red-500 text-center py-2">{error}</p>
+            <p className="text-red-600 text-center py-2">{error}</p>
           )}
 
           <p className="italic text-center py-2 text-gray-600">or</p>
@@ -69,21 +70,32 @@ const Login = () => {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="flex items-center justify-center gap-2 border border-gray-300 rounded-md py-2.5 px-4 bg-white hover:bg-gray-50 transition-all"
+            className="flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-300 rounded-md font-medium text-sm py-2.5 px-4 w-full transition duration-200 hover:bg-gray-100"
           >
             <img
               src="https://developers.google.com/identity/images/g-logo.png"
               alt="Google logo"
               className="w-5 h-5"
             />
-            <span className="text-gray-700 font-medium text-sm">
-              Continue with Google
-            </span>
+            Continue with Google
           </button>
+
+          {/* 👇 Added link to Sign Up page */}
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Don’t have an account?{' '}
+            <a
+              href="/signup"
+              className="text-blue-600 underline hover:text-blue-800"
+            >
+              Sign up
+            </a>
+          </p>
         </form>
       </div>
     </div>
   );
+
+
 };
 
 export default Login;
