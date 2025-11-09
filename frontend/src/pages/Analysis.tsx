@@ -1,26 +1,34 @@
 import { useAuth } from '@/auth/AuthProvider';
 import MainLayout from '@/layouts/MainLayout'
 import React, { useEffect, useState } from 'react'
+import { useParams } from "react-router";
+
 
 const Analysis = () => {
   const { getSession } = useAuth();
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<string | null>(null);
+  const { attemptId } = useParams()
 
 
   useEffect(() => {
     const fetchAttempt = async () => {
       try {
+        
         const session = await getSession();
         const userId = session.data.session?.user.id;
-        const params = new URLSearchParams({ attempt_id: attemptId });
+        const params = new URLSearchParams({
+          attempt_id: attemptId ?? '',
+          user_id: userId?.toString() ?? '',
+        });
+        console.log(userId, attemptId)
+        // const params = new URLSearchParams({ attempt_id: attemptId.toString(), user_id: userId });
         const res = await fetch(`http://127.0.0.1:5000/api/attempt${params.toString()}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({}),
         });
         const data = await res.json();
         const {
@@ -43,7 +51,7 @@ const Analysis = () => {
       }
     };
     fetchAttempt();
-  }, []);
+  }, [attemptId, getSession]);
 
   return (
     <>
