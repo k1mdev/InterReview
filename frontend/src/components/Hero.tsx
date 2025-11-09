@@ -6,7 +6,7 @@ import { useAuth } from "@/auth/AuthProvider"
 const Hero = () => {
     const { isLoggedIn } = useAuth();
   return (
-    <section className="relative flex flex-col items-center justify-center text-center min-h-screen bg-gradient-to-b from-white to-gray-50 overflow-hidden px-6">
+    <section className="relative flex flex-col items-center justify-center text-center min-h-screen bg-gradient-to-b from-white to-gray-50 overflow-hidden px-6 select-none">
       {/* Soft gradient and glowing blobs */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-white to-transparent" />
       <div className="absolute top-10 left-20 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-40 animate-pulse" />
@@ -58,11 +58,11 @@ const Hero = () => {
         <Button className="flex items-center gap-2 px-6 py-3 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all hover:shadow-xl">
             {isLoggedIn ? 
                 <Link to="/create">
-                    Practice Now
+                    Start Practicing
                 </Link>
                 :
                 <Link to="/login">
-                    Sign In
+                    Log In
                 </Link>
             }   
         </Button>

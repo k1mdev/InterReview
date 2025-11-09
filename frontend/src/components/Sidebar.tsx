@@ -55,7 +55,7 @@ const Sidebar = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="shrink-0 px-5 py-6 border-b border-indigo-100/60 backdrop-blur-sm bg-white/70 flex items-center justify-between"
+        className="shrink-0 px-5 py-6 border-b border-indigo-100/60 backdrop-blur-sm bg-white/70 flex items-center justify-center"
       >
         <motion.h1
           className="text-2xl font-extrabold tracking-tight cursor-pointer select-none"
