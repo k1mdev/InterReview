@@ -31,7 +31,7 @@ const Hero = () => {
           }}
           className="bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 bg-[length:200%_200%] bg-clip-text text-transparent"
         >
-          (Re)view
+          Review
         </motion.span>
       </motion.h1>
 
@@ -42,7 +42,7 @@ const Hero = () => {
         transition={{ delay: 0.3, duration: 0.7 }}
         className="text-lg text-gray-600 max-w-xl"
       >
-        Practice real interviews. Get instant AI feedback.
+        Practice for real interviews. Get instant AI feedback.
         Elevate your performance and land your dream job.
       </motion.p>
 

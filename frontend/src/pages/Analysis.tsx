@@ -2,6 +2,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import MainLayout from '@/layouts/MainLayout';
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
+import { motion } from 'framer-motion';
 
 interface TimestampedFeedback {
   category: string;
@@ -97,65 +98,92 @@ const Analysis = () => {
 
   return (
     <MainLayout>
-      <div className="flex flex-col items-center justify-start min-h-screen pt-8 space-y-6">
-        <div className="flex flex-col items-center">
-          <textarea
-            className="rounded-2xl border-2 w-[45vw] h-[13vh] p-7 text-2xl resize-none"
-            value={question || 'QUESTION HERE'}
-            readOnly
-          />
-          <audio ref={audioRef} controls src={audioSrc || ''} className="p-2" />
+      <div className="relative min-h-screen w-full flex flex-col items-center pt-10 pb-16 overflow-hidden bg-gradient-to-b from-white via-indigo-50 to-gray-50">
+        {/* Decorative gradient blobs */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -top-24 -left-32 w-72 h-72 rounded-full bg-blue-200/50 blur-3xl animate-pulse" />
+          <div className="absolute bottom-[-120px] -right-40 w-96 h-96 rounded-full bg-purple-300/40 blur-3xl animate-pulse" />
         </div>
 
-        <div className="mb-4 w-[55vw]">
-          <p className="font-semibold mb-2">You responded:</p>
-          <i><textarea
-            className="text-center w-full p-7 text-sm resize-none"
-            value={("\"" + transcript + "\"") || 'Transcript'}
-            readOnly
-          /></i>
-        </div>
-
-        {feedback && (
-          <div className="w-[65vw] flex flex-col items-start space-y-3">
-            <p className="font-semibold text-lg">Timestamped Feedback</p>
-            <div
-              ref={feedbackContainerRef}
-              className="flex flex-col w-full space-y-2 border rounded-2xl p-3 h-[35vh] overflow-y-auto bg-gray-50"
-            >
-              {feedback.timestamped_feedback.map((seg, idx) => {
-                const isActive = idx === activeIndex;
-                const isPast = activeIndex !== null && idx < activeIndex;
-                return (
-                  <div
-                    key={idx}
-                    ref={(el) => (feedbackCardRefs.current[idx] = el)}
-                    className={`border rounded-2xl p-4 transition-all duration-300 ${
-                      isActive
-                        ? 'bg-green-50 border-green-200'
-                        : isPast
-                        ? 'bg-gray-100 border-gray-300 opacity-90'
-                        : 'bg-white border-gray-200 opacity-70'
-                    }`}
-                  >
-                    <p className="font-semibold">{seg.category}</p>
-                    <p className="text-sm mt-1">{seg.detail}</p>
-                    <p className="italic text-xs mt-2 text-gray-600">
-                      “{seg.transcript_segment}”
-                    </p>
-                  </div>
-                );
-              })}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col items-center space-y-4 w-full"
+        >
+          {/* Question Card */}
+          <div className="w-[70vw] max-w-5xl">
+            <div className="backdrop-blur-sm bg-white/70 rounded-2xl border border-indigo-100/70 shadow-sm hover:shadow-md transition-shadow p-6">
+              <p className="text-xs font-medium tracking-wide text-indigo-500 mb-2 uppercase">Question</p>
+              <textarea
+                className="w-full h-[14vh] resize-none bg-white/60 rounded-xl border border-indigo-100 focus:border-indigo-300 focus:ring-0 p-5 text-xl font-medium leading-snug shadow-inner"
+                value={question || 'QUESTION HERE'}
+                readOnly
+              />
+              <audio
+                ref={audioRef}
+                controls
+                src={audioSrc || ''}
+                className="mt-3 w-full accent-indigo-600"
+              />
             </div>
-
-            <p className="font-semibold text-lg mt-6">Overall Feedback</p>
-            <textarea
-              className="rounded-2xl border-2 w-full h-[25vh] p-7 text-sm resize-none bg-white"
-              value={feedback.overall_feedback}
-              readOnly
-            />
           </div>
-        )}
+
+          {/* Transcript Card */}
+          <div className="w-[72vw] max-w-5xl">
+            <div className="backdrop-blur-sm bg-white/70 rounded-2xl border border-indigo-100/70 shadow-sm hover:shadow-md transition-shadow p-6">
+              <p className="font-semibold mb-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">You responded</p>
+              <textarea
+                className="w-full h-[18vh] resize-none rounded-xl bg-white/60 border border-indigo-100 focus:border-indigo-300 p-5 text-sm leading-relaxed shadow-inner"
+                value={("\"" + transcript + "\"") || 'Transcript'}
+                readOnly
+              />
+            </div>
+          </div>
+
+          {/* Feedback Section */}
+          {feedback && (
+            <div className="w-[75vw] max-w-6xl flex flex-col items-start space-y-6">
+              <p className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">Timestamped Feedback</p>
+              <div
+                ref={feedbackContainerRef}
+                className="flex flex-col w-full space-y-3 rounded-2xl p-4 h-[40vh] overflow-y-auto backdrop-blur-sm bg-white/60 border border-indigo-100/70 shadow-inner"
+              >
+                {feedback.timestamped_feedback.map((seg, idx) => {
+                  const isActive = idx === activeIndex;
+                  const isPast = activeIndex !== null && idx < activeIndex;
+                  return (
+                    <motion.div
+                      key={idx}
+                      ref={(el) => { feedbackCardRefs.current[idx] = el; }}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`rounded-xl border px-5 py-4 transition-all duration-300 text-sm leading-snug shadow-sm ${
+                        isActive
+                          ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white border-transparent shadow-md scale-[1.015]'
+                          : isPast
+                          ? 'bg-white/70 border-indigo-200 text-gray-700'
+                          : 'bg-white/40 border-indigo-100 hover:border-indigo-300 hover:bg-white/60'
+                      }`}
+                    >
+                      <p className="font-semibold tracking-tight">{seg.category}</p>
+                      <p className={`mt-1 ${isActive ? 'text-indigo-50' : 'text-gray-600'}`}>{seg.detail}</p>
+                      <p className={`italic text-xs mt-2 ${isActive ? 'text-indigo-100' : 'text-gray-500'}`}>“{seg.transcript_segment}”</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              <p className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">Overall Feedback</p>
+              <textarea
+                className="rounded-2xl border w-full h-[28vh] p-6 text-sm resize-none bg-white/70 border-indigo-100 focus:border-indigo-300 shadow-inner"
+                value={feedback.overall_feedback}
+                readOnly
+              />
+            </div>
+          )}
+        </motion.div>
       </div>
     </MainLayout>
   );
