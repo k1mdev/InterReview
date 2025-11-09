@@ -42,23 +42,22 @@ const Sidebar = () => {
       <div className="w-full border-t border-black"></div>
 
       <div className="flex-1 overflow-y-auto p-4">
-        {questionHeaders.map((header, idx) => {
+        {questionHeaders.map((header) => {
 
           const isSelected = header.id === selectedId;
           return (
             <div
-              key={idx}
+              key={header.id}
               onClick={() => {
                 if (isSelected) {
                   setSelectedId(null);
                 } else {
-                  setSelectedId(idx);
+                  setSelectedId(header.id);
                 }
               }}
               className={`
                 p-2 rounded mb-2 cursor-pointer
-                ${isSelected ? "bg-gray-400" : "bg-gray-100"}
-                hover:bg-gray-200
+                ${isSelected ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-100 hover:bg-gray-200"}
                 transition-colors duration-200
                 truncate
               `}
