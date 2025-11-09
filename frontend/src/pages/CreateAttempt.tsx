@@ -13,7 +13,7 @@ const CreateAttempt = () => {
           <span className='absolute bottom-2/3 flex flex-col items-center'>
           <textarea
             className='rounded-2xl border-2 w-[45vw] h-[13vh] p-4 text-2xl resize-none'
-            placeholder="What's the question?"
+            placeholder="Enter question here"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
           />
