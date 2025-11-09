@@ -37,14 +37,7 @@ def attempt():
                 return jsonify({'status': 'error', 'message': 'Missing user_id.'}), 400
 
             # # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
-            # head = file.read(261)
-            # kind = filetype.guess(head)
-            # file.seek(0)
-            # if not kind or kind.mime not in ['audio/mpeg', 'audio/wav']:
-            print(file.mimetype)
-            if file.mimetype not in ['audio/mp4', 'audio/mpeg', 'audio/wav']:
-                # print(file.name)
-                # if not file.name.endswith('.m4a'):
+            if not file.mimetype.startswith('audio/'):
                     return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
             
             import tempfile

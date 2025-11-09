@@ -33,7 +33,7 @@ export default function Recorder() {
     }, 10);
 
     mediaRecorder.current.onstop = () => {
-      const recordedBlob = new Blob(chunks.current, { type: 'audio/mp3' });
+      const recordedBlob = new Blob(chunks.current, { type: 'audio/wav' });
       const url = URL.createObjectURL(recordedBlob);
       setRecordedURL(url);
 
@@ -49,6 +49,29 @@ export default function Recorder() {
     if (mediaRecorder.current) {
       mediaRecorder.current.stop();
       mediaStream.current?.getTracks().forEach(track => track.stop());
+    }
+  };
+
+  const submitAudio = async () => {
+    const response = await fetch(recordedURL);
+    const blob = await response.blob();
+
+    const formData = new FormData();
+    formData.append('file', blob, 'response.wav');
+    formData.append('question', "sample question");
+    formData.append('user_id', "12345");
+
+    const res = await fetch('http://127.0.0.1:5000/api/attempt', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log("Success", data);
+    }
+    else {
+      console.log("Error", await res.text());
     }
   };
 
@@ -70,7 +93,7 @@ export default function Recorder() {
       ) : (
         <div className='flex items-center justify-center'>
           <Button
-            variant="secondary"
+            variant="default"
             onClick={startRecording}
           >
             {recordedURL ? 'Re-' : ''}Record Your Response
@@ -82,7 +105,7 @@ export default function Recorder() {
       {recordedURL && (
         <>
           <audio className='p-2' controls src={recordedURL} />
-          <Button variant="secondary">
+          <Button variant="secondary" onClick={submitAudio}>
             Submit
           </Button>
         </>
