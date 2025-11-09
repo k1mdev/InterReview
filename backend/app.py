@@ -44,8 +44,14 @@ def attempt():
             if not kind or kind.mime not in ['audio/mpeg', 'audio/wav']:
                 return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
             
-            # get feedback from Gemini
-            analysis = gemini_service_simple.evaluate_response(question, file)
+            import tempfile
+            # Save uploaded audio temporarily to a file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
+                file.save(tmp.name)
+                tmp_path = tmp.name  # path to the saved file
+
+            # Evaluate with Gemini using the temp file path
+            analysis = gemini_service_simple.evaluate_response(question, tmp_path)
             if 'error' in analysis:
                 return jsonify({'status': 'error', 'message': f"Gemini error: {analysis['error']}"}), 502
 
