@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Link } from "react-router"
 import { useAuth } from '@/auth/AuthProvider';
 
 const Sidebar = () => {
-    const { logOut, user } = useAuth(); // assuming your AuthProvider exposes logout() and user
+  const { logOut, user } = useAuth();
+  const questionHeaders = ["Explain how you blah blah blah", "When was a time blah blah blah", "What would you do if blah blah blah", "What is your experience in blah blah blah", "Explain how you blah blah blah", "When was a time blah blah blah", "What would you do if blah blah blah", "What is your experience in blah blah blah"]
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+
+
   return (
     <div
       className="h-screen flex flex-col w-[17vw] transition-all duration-300 bg-white shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1)]"
@@ -28,11 +33,35 @@ const Sidebar = () => {
       <div className="w-full border-t border-black"></div>
 
       <div className="flex-1 overflow-y-auto p-4">
-        {Array.from({ length: 20 }).map((_, idx) => (
-          <div key={idx} className="p-2 bg-gray-100 rounded mb-2">
-            {`Item ${idx + 1}`}
-          </div>
-        ))}
+        {questionHeaders.map((header, idx) => {
+
+          const isSelected = idx === selectedIndex;
+          return (
+            <div
+              key={idx}
+              onClick={() => {
+                if (isSelected) {
+                  setSelectedIndex(null);
+                } else {
+                  setSelectedIndex(idx);
+                }
+              }}
+              className={`
+                p-2 rounded mb-2 cursor-pointer
+                ${isSelected ? "bg-gray-400" : "bg-gray-100"}
+                hover:bg-gray-200
+                transition-colors duration-200
+                truncate
+              `}
+            >
+              {header}
+            </div>
+          )
+
+        }
+          
+
+        )}
       </div>
 
       <div className="p-4 border-t border-black">
