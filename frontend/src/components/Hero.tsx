@@ -1,8 +1,10 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router"
+import { useAuth } from "@/auth/AuthProvider"
 
 const Hero = () => {
+    const { isLoggedIn } = useAuth();
   return (
     <section className="relative flex flex-col items-center justify-center text-center min-h-screen bg-gradient-to-b from-white to-gray-50 overflow-hidden px-6">
       {/* Soft gradient and glowing blobs */}
@@ -54,9 +56,15 @@ const Hero = () => {
         className="mt-10"
       >
         <Button className="flex items-center gap-2 px-6 py-3 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all hover:shadow-xl">
-          <Link to="/login">
-            Sign In
-          </Link>
+            {isLoggedIn ? 
+                <Link to="/create">
+                    Practice Now
+                </Link>
+                :
+                <Link to="/login">
+                    Sign In
+                </Link>
+            }   
         </Button>
       </motion.div>
 
