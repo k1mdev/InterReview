@@ -44,13 +44,11 @@ const Sidebar = () => {
 
   return (
     <aside className="relative h-screen flex flex-col w-[17vw] min-w-[260px] bg-gradient-to-b from-white via-indigo-50 to-gray-50 overflow-hidden shadow-[4px_0_18px_-4px_rgba(0,0,0,0.15)]">
-      {/* Decorative gradient blobs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-[-60px] left-[-40px] w-48 h-48 bg-blue-200/50 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-[-80px] right-[-40px] w-56 h-56 bg-purple-300/40 rounded-full blur-3xl animate-pulse" />
       </div>
 
-      {/* Brand header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,22 +74,18 @@ const Sidebar = () => {
         </motion.h1>
       </motion.div>
 
-      {/* Add attempt */}
-      <div className="px-5 py-4 border-b border-indigo-100/60 bg-white/50 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">Add Attempt</span>
-          <Button
-            size="icon"
-            className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-shadow"
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <div className="flex justify-center items-center">
+          <Link
+            to="/create"
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-md font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-shadow"
           >
-            <Link to="/create">
-              <IconPlus />
-            </Link>
-          </Button>
+            <span className='text-sm font-medium text-white'>Add Attempt</span>
+            <IconPlus className="w-5 h-5" />
+          </Link>
         </div>
       </div>
 
-      {/* Attempts list */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {attempts.map((attempt) => {
           const isSelected = attempt.attempt_id === selectedId;
@@ -129,7 +123,6 @@ const Sidebar = () => {
         )}
       </div>
 
-      {/* Footer */}
       <div className="px-5 py-5 border-t border-indigo-100/60 bg-white/60 backdrop-blur-sm text-xs text-gray-600 space-y-2">
         <div className="truncate">Signed in as {user?.email}</div>
         <Button
