@@ -19,7 +19,7 @@ def close_connection(e):
 def home():
     return "Hello, Flask!"
 
-@app.route('/api/attempt', methods=['POST', 'GET'])
+@app.route('/api/attempt', methods=['POST', 'GET', 'DELETE'])
 def attempt():
     if request.method == 'POST': # POST request
         try:
@@ -85,7 +85,7 @@ def attempt():
         except Exception as e:
             return jsonify({'status': 'error', 'message': f'Error saving to DB: {e}'}), 500
 
-    else: # GET requests
+    elif request.method == 'GET': # GET requests
         try:
             if request.args.get('attempt_id') is not None and request.args.get('user_id') is not None: 
                 # need attempt_id and user_id to retrieve the specified attempt
@@ -109,6 +109,17 @@ def attempt():
             
         except Exception as e:
             return jsonify({'status': 'error', 'message': f'Error fetching from DB: {e}'}), 500
+        
+    else: # DELETE request
+        attempt_id = request.args.get('attempt_id')
+        user_id = request.args.get('user_id')
+        try:
+            db_service.delete_attempt_by_id(attempt_id)
+            s3_service.delete_audio(attempt_id, user_id)
+            return jsonify({'status': 'success'}), 200
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': f'Error deleting attempt from DB: {e}'}), 500
+
           
 if __name__ == '__main__':
     app.run(debug=True)

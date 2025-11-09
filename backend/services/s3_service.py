@@ -43,3 +43,19 @@ def get_audio(uuid, user_id):
         return f"data:audio/mpeg;base64,{encoded}"
     except Exception as e:
         raise Exception(f"Error fetching file from S3: {e}")
+    
+def delete_audio(uuid, user_id):
+    """
+    Deletes an audio clip from the S3 bucket.
+
+    Parameters:
+        uuid (UUID): The UUID of the audio file.
+        user_id (str): The user ID who generated this recording.
+    """
+    try:
+        s3.delete_object(
+            Bucket=BUCKET_NAME,
+            Key=f"{user_id}/{uuid}"
+        )
+    except Exception as e:
+        raise Exception(f"Error deleting file from S3: {e}")

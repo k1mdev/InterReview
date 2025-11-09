@@ -43,4 +43,13 @@ def get_attempt_by_id(attempt_id):
         """
         cur.execute(query, (attempt_id,))
         return cur.fetchone()
-    
+
+def delete_attempt_by_id(attempt_id):
+    print(attempt_id)
+    conn = get_connection()
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        query = """
+            DELETE FROM Attempt WHERE attempt_id = %s;
+        """
+        cur.execute(query, (attempt_id,))
+    conn.commit()

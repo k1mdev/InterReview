@@ -1,7 +1,9 @@
 import { useAuth } from '@/auth/AuthProvider';
+import { Button } from '@/components/ui/button';
 import MainLayout from '@/layouts/MainLayout';
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 
 interface TimestampedFeedback {
   category: string;
@@ -17,6 +19,7 @@ interface Feedback {
 }
 
 const Analysis = () => {
+    const navigate = useNavigate();
   const { getSession } = useAuth();
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -27,6 +30,15 @@ const Analysis = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const feedbackContainerRef = useRef<HTMLDivElement | null>(null);
   const feedbackCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const handleDeleteClick = async () => {
+    const session = await getSession();
+    const userId = session.data.session?.user.id;
+    await fetch(`http://127.0.0.1:5000/api/attempt?attempt_id=${attemptId}&user_id=${userId}`, {
+        method: 'DELETE'
+    });
+    navigate('/create');
+  };
 
   useEffect(() => {
     const fetchAttempt = async () => {
@@ -99,6 +111,12 @@ const Analysis = () => {
     <MainLayout>
       <div className="flex flex-col items-center justify-start min-h-screen pt-8 space-y-6">
         <div className="flex flex-col items-center">
+            <Button
+          onClick={() => handleDeleteClick()}
+          className="absolute right-8 top-4 bg-red-500 hover:bg-red-600 text-white"
+        >
+          Delete
+        </Button>
           <textarea
             className="rounded-2xl border-2 w-[45vw] h-[13vh] p-7 text-2xl resize-none"
             value={question || 'QUESTION HERE'}
