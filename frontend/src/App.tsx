@@ -5,19 +5,24 @@ import Login from './pages/Login'
 import CreateAttempt from './pages/CreateAttempt'
 import SignUp from './pages/SignUp'
 import Analysis from './pages/Analysis'
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./auth/AuthProvider";
+
 
 function App() {
 
   return (
     <>
       <div>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/logIn' element={<Login />} />
-          <Route path='/signUp' element={<SignUp />} />
-          <Route path='/create' element={<CreateAttempt />} />
-          <Route path='/analysis' element={<Analysis />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/logIn' element={<Login />} />
+            <Route path='/signUp' element={<SignUp />} />
+            <Route path='/create' element={<ProtectedRoute><CreateAttempt /></ProtectedRoute>} />
+            <Route path='/analysis' element={<ProtectedRoute><Analysis /></ProtectedRoute>} />
+          </Routes>
+        </AuthProvider>
       </div>
     </>
   )
