@@ -9,7 +9,7 @@ const CreateAttempt = () => {
   return (
     <>
       <MainLayout>
-        <div className="flex flex-col items-center justify-center h-screen">
+  <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-white via-indigo-50 to-gray-50">
           <span className='absolute bottom-2/3 flex flex-col items-center'>
           <textarea
             className='rounded-2xl border-2 w-[45vw] h-[13vh] p-4 text-2xl resize-none'
