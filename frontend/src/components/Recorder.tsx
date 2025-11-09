@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { IconMicrophone, IconPlayerStop } from '@tabler/icons-react';
+import { IconMicrophone, IconPlayerStop, IconLoader2 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/auth/AuthProvider';
+import { useNavigate } from 'react-router';
 
 const padnum = (x: number, space: number) => String(x).padStart(space, "0");
 
@@ -10,10 +11,14 @@ export default function Recorder({ title }: { title: string }) {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedURL, setRecordedURL] = useState('');
   const [seconds, setSeconds] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const mediaStream = useRef(null);
-  const mediaRecorder = useRef(null);
-  const chunks = useRef([]);
+  const mediaStream = useRef<MediaStream | null>(null);
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
+  const chunks = useRef<Blob[]>([]);
+
+  const navigate = useNavigate();
 
   const startRecording = async () => {
     setRecordedURL('');
@@ -55,32 +60,40 @@ export default function Recorder({ title }: { title: string }) {
   };
 
   const submitAudio = async () => {
-    const response = await fetch(recordedURL);
-    const blob = await response.blob();
-    const session = await getSession();
+    setIsSubmitting(true);
+    setError('');
 
-    const formData = new FormData();
-    formData.append('file', blob, 'response.wav');
-    formData.append('question', title);
-    formData.append('user_id', session.data.session?.user.id!);
+    try {
+      const response = await fetch(recordedURL);
+      const blob = await response.blob();
+      const session = await getSession();
 
-    const res = await fetch('http://127.0.0.1:5000/api/attempt', {
-      method: 'POST',
-      body: formData,
-    });
+      const formData = new FormData();
+      formData.append('file', blob, 'response.wav');
+      formData.append('question', title);
+      formData.append('user_id', session.data.session?.user.id!);
 
-    if (res.ok) {
+      const res = await fetch('http://127.0.0.1:5000/api/attempt', {
+        method: 'POST',
+        body: formData,
+      });
+
       const data = await res.json();
-      console.log("Success", data);
-    }
-    else {
-      console.log("Error", await res.text());
+
+      if (res.ok && data.status === 'success') {
+        navigate(`/analysis/${data.data.attempt_id}`);
+      } else {
+        setError('An error occurred while submitting your response.');
+      }
+    } catch (err) {
+      setError('An error occurred while submitting your response.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div>
-
       {isRecording ? (
         <div>
           <div className='text-5xl font-mono'>
@@ -108,12 +121,24 @@ export default function Recorder({ title }: { title: string }) {
       {recordedURL && (
         <>
           <audio className='p-2' controls src={recordedURL} />
-          <Button variant="secondary" onClick={submitAudio}>
-            Submit
+          <Button
+            variant="secondary"
+            onClick={submitAudio}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <IconLoader2 className="animate-spin mr-2" /> Submitting...
+              </>
+            ) : (
+              'Submit'
+            )}
           </Button>
+          {error && (
+            <div className="text-red-500 mt-2 text-sm">{error}</div>
+          )}
         </>
       )}
-
     </div>
   );
 }
