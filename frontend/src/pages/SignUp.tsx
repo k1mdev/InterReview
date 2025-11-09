@@ -2,43 +2,48 @@ import React, { useState } from 'react';
 import { useAuth } from '@/auth/AuthProvider';
 import './Login.css';
 
-const Login = () => {
-  const { logIn, logInWithGoogle, isLoading } = useAuth();
+const SignUp = () => {
+  const { signUp, signUpWithGoogle, isLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(false);
+
     try {
-      const { error } = await logIn(email, password);
+      const { error } = await signUp(email, email, password);
       if (error) setError(error.message);
+      else setSuccess(true);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
     }
   };
 
-  const handleGoogleLogin = () => {
-    logInWithGoogle();
+  const handleGoogleSignUp = () => {
+    signUpWithGoogle();
   };
 
   return (
     <div className="login-page">
       <div className="card">
-        <form className="login-form" onSubmit={handleLogin}>
-          <h2>Log In</h2>
+        <form className="login-form" onSubmit={handleSignUp}>
+          <h2>Sign Up</h2>
           <br />
           <div className="field">
             <label>Email</label>
             <input
-              type="text"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
+
           <div className="field">
             <label>Password</label>
             <input
@@ -48,13 +53,19 @@ const Login = () => {
               required
             />
           </div>
+
           <button className="login-button" type="submit" disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'Log In'}
+            {isLoading ? 'Creating account...' : 'Sign Up'}
           </button>
 
           {error && (
             <p style={{ color: 'red', textAlign: 'center', padding: '10px' }}>
               {error}
+            </p>
+          )}
+          {success && (
+            <p style={{ color: 'green', textAlign: 'center', padding: '10px' }}>
+              Check your email for a confirmation link!
             </p>
           )}
 
@@ -71,7 +82,7 @@ const Login = () => {
           <button
             type="button"
             className="google-btn"
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignUp}
           >
             <img
               src="https://developers.google.com/identity/images/g-logo.png"
@@ -86,4 +97,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

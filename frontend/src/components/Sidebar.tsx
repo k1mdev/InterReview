@@ -2,8 +2,10 @@ import React from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Link } from "react-router"
+import { useAuth } from '@/auth/AuthProvider';
 
 const Sidebar = () => {
+    const { logOut, user } = useAuth(); // assuming your AuthProvider exposes logout() and user
   return (
     <div
       className="h-screen flex flex-col w-[17vw] transition-all duration-300 bg-white shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1)]"
@@ -34,7 +36,10 @@ const Sidebar = () => {
       </div>
 
       <div className="p-4 border-t border-black">
-        <span className="text-sm">Happy prep, username</span>
+        <span className="text-sm">Happy prep, {user?.email}</span>
+        <button 
+            className='text-red-600 border border-red-600 rounded-md p-1 mt-2 transition-transform duration-200 ease-in-out hover:scale-105 active:scale-95' 
+            onClick={logOut}>Log Out</button>
       </div>
     </div>
   );
