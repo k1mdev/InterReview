@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router";
 import { useAuth } from '@/auth/AuthProvider';
 
 const Login = () => {
@@ -6,13 +7,20 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
       const { error } = await logIn(email, password);
-      if (error) setError(error.message);
+      if (error) { 
+        setError(error.message);
+      }
+      else {
+        navigate('/create')
+      }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
@@ -21,6 +29,7 @@ const Login = () => {
 
   const handleGoogleLogin = () => {
     logInWithGoogle();
+    navigate('/create');
   };
 
   return (
