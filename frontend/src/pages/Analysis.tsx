@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
+import { Trash2 } from 'lucide-react';
 
 interface TimestampedFeedback {
   category: string;
@@ -17,6 +18,13 @@ interface TimestampedFeedback {
 interface Feedback {
   overall_feedback: string;
   timestamped_feedback: TimestampedFeedback[];
+}
+
+const msToTimestamp = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 const Analysis = () => {
@@ -117,6 +125,15 @@ const Analysis = () => {
           <div className="absolute bottom-[-120px] -right-40 w-96 h-96 rounded-full bg-purple-300/40 blur-3xl animate-pulse" />
         </div>
 
+        <div className="absolute top-12 right-8">
+      <Button
+        onClick={handleDeleteClick}
+        className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl shadow-md"
+      >
+        <Trash2 className="h-5 w-5" />
+      </Button>
+    </div>
+
         <motion.div
           initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,12 +144,6 @@ const Analysis = () => {
           <div className="w-[70vw] max-w-5xl">
             <div className="backdrop-blur-sm bg-white/70 rounded-2xl border border-indigo-100/70 shadow-sm hover:shadow-md transition-shadow p-6">
               <p className="text-xs font-medium tracking-wide text-indigo-500 mb-2 uppercase">Question</p>
-                <Button
-          onClick={() => handleDeleteClick()}
-          className="absolute right-8 top-4 bg-red-500 hover:bg-red-600 text-white"
-        >
-          Delete
-        </Button>
           <textarea
                 className="w-full h-[14vh] resize-none bg-white/60 rounded-xl border border-indigo-100 focus:border-indigo-300 focus:ring-0 p-5 text-xl font-medium leading-snug shadow-inner"
                 value={question || 'QUESTION HERE'}
@@ -168,29 +179,53 @@ const Analysis = () => {
                 className="flex flex-col w-full space-y-3 rounded-2xl p-4 h-[40vh] overflow-y-auto backdrop-blur-sm bg-white/60 border border-indigo-100/70 shadow-inner"
               >
                 {feedback.timestamped_feedback.map((seg, idx) => {
-                  const isActive = idx === activeIndex;
-                  const isPast = activeIndex !== null && idx < activeIndex;
-                  return (
-                    <motion.div
-                      key={idx}
-                      ref={(el) => { feedbackCardRefs.current[idx] = el; }}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className={`rounded-xl border px-5 py-4 transition-all duration-300 text-sm leading-snug shadow-sm ${
-                        isActive
-                          ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white border-transparent shadow-md scale-[1.015]'
-                          : isPast
-                          ? 'bg-white/70 border-indigo-200 text-gray-700'
-                          : 'bg-white/40 border-indigo-100 hover:border-indigo-300 hover:bg-white/60'
-                      }`}
-                    >
-                      <p className="font-semibold tracking-tight">{seg.category}</p>
-                      <p className={`mt-1 ${isActive ? 'text-indigo-50' : 'text-gray-600'}`}>{seg.detail}</p>
-                      <p className={`italic text-xs mt-2 ${isActive ? 'text-indigo-100' : 'text-gray-500'}`}>“{seg.transcript_segment}”</p>
-                    </motion.div>
-                  );
+                    const isActive = idx === activeIndex;
+                    const isPast = activeIndex !== null && idx < activeIndex;
+                    return (
+                        <motion.div
+                        key={idx}
+                        ref={(el) => { feedbackCardRefs.current[idx] = el; }}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className={`relative rounded-xl border px-5 py-4 transition-all duration-300 text-sm leading-snug shadow-sm ${
+                            isActive
+                            ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white border-transparent shadow-md scale-[1.015]'
+                            : isPast
+                            ? 'bg-white/70 border-indigo-200 text-gray-700'
+                            : 'bg-white/40 border-indigo-100 hover:border-indigo-300 hover:bg-white/60'
+                        }`}
+                        >
+                        <p
+                            className={`absolute top-4 left-5 text-xs font-medium ${
+                            isActive ? 'text-indigo-100' : 'text-gray-500'
+                            }`}
+                        >
+                            {msToTimestamp(seg.start_time_ms)} – {msToTimestamp(seg.end_time_ms)}
+                        </p>
+
+                        <div className="flex justify-center">
+                            <p className="font-semibold tracking-tight mt-1">
+                            {seg.category}
+                            </p>
+                        </div>
+
+                        <p className={`mt-2 ${isActive ? 'text-indigo-50' : 'text-gray-600'}`}>
+                            {seg.detail}
+                        </p>
+                        <p
+                            className={`italic text-xs mt-2 ${
+                            isActive ? 'text-indigo-100' : 'text-gray-500'
+                            }`}
+                        >
+                            "{seg.transcript_segment}"
+                        </p>
+                        </motion.div>
+                    );
                 })}
+
+
+
               </div>
 
               <p className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">Overall Feedback</p>
