@@ -98,9 +98,9 @@ def attempt():
                 user_id = request.args.get('user_id')
                 # fetch attempt from DB
                 res = db_service.get_attempt_by_id(attempt_id)
-                # get audio file
-                audio_file = s3_service.get_audio(attempt_id, user_id)
-                res['audio'] = audio_file
+                # get audio file as base64
+                audio_data = s3_service.get_audio(attempt_id, user_id)
+                res['audio'] = audio_data
                 return jsonify({'status': 'success', 'data': res}), 200
             elif request.args.get('user_id') is not None:
                 # if only the user_id is specified, then retrieve all attempts associated with the user
