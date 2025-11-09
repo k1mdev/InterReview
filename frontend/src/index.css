@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-
+/* 
 @layer base {
   :root {
     --sidebar: oklch(0.985 0 0);
@@ -196,4 +196,4 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
-}
+} */

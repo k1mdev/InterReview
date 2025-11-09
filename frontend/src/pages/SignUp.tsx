@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/auth/AuthProvider';
-import './Login.css';
 
 const SignUp = () => {
   const { signUp, signUpWithGoogle, isLoading } = useAuth();
