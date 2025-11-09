@@ -75,7 +75,7 @@ const Sidebar = () => {
                 console.log("Selected ID:", newSelectedId); // <-- log here
               }}
               className={`
-                p-2 rounded mb-2 cursor-pointer
+                block p-2 rounded mb-2 cursor-pointer
                 ${isSelected ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-100 hover:bg-gray-200"}
                 transition-colors duration-200
                 truncate
