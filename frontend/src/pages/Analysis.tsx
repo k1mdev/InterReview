@@ -4,20 +4,42 @@ import React, { useEffect, useState } from 'react'
 const Analysis = () => {
 
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [transcript, setTranscript] = useState<string | null>(null);
+
 
   useEffect(() => {
-    const fetchAudio = async () => {
+    const fetchAttempt = async () => {
       try {
-        const res = await fetch("/api/audio");
+        const params = new URLSearchParams({ attempt_id: attemptId, user_id: userId });
+        const res = await fetch(`http://127.0.0.1:5000/api/attempt${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        });
         const data = await res.json();
-        const base64String = data.audioBase64;
+        const {
+          attempt_id,
+          question,
+          answer,
+          feedback,
+          user_id,
+          created,
+          audio
+        } = data;
+
+        const base64String = audio.audioBase64;
         const src = `data:audio/mp3;base64,${base64String}`;
         setAudioSrc(src);
+        setFeedback(feedback)
+        setTranscript(answer)
       } catch (err) {
         console.error("Failed to fetch audio:", err);
       }
     };
-    fetchAudio();
+    fetchAttempt();
   }, []);
 
   return (
@@ -30,11 +52,11 @@ const Analysis = () => {
             </span>
             
             <div className='mb-4'>
-                <p>Transcript</p>
-                <textarea className='rounded-2xl border-2 w-[55vw] h-[20vh] p-7 text-sm resize-none' defaultValue="TRANSCRIPT HERE" readOnly/>
+                <p>You responded:</p>
+                <textarea className='rounded-2xl border-2 w-[55vw] h-[20vh] p-7 text-sm resize-none' defaultValue={transcript ? transcript : 'Transcript'} readOnly/>
             </div>
 
-                <textarea className='rounded-2xl border-2 w-[65vw] h-[40vh] p-7 text-sm resize-none' defaultValue="HIGHLIGHTS HERE" readOnly/>
+            <textarea className='rounded-2xl border-2 w-[65vw] h-[40vh] p-7 text-sm resize-none' defaultValue={"HIGHLIGHTS HERE"} readOnly/>
         </div>
 
 

@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { IconMicrophone, IconPlayerStop } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/auth/AuthProvider';
 
 const padnum = (x: number, space: number) => String(x).padStart(space, "0");
 
-export default function Recorder() {
+export default function Recorder({ title }: { title: string }) {
+  const { getSession } = useAuth();
   const [isRecording, setIsRecording] = useState(false);
   const [recordedURL, setRecordedURL] = useState('');
   const [seconds, setSeconds] = useState(0);
@@ -55,11 +57,12 @@ export default function Recorder() {
   const submitAudio = async () => {
     const response = await fetch(recordedURL);
     const blob = await response.blob();
+    const session = await getSession();
 
     const formData = new FormData();
     formData.append('file', blob, 'response.wav');
-    formData.append('question', "sample question");
-    formData.append('user_id', "12345");
+    formData.append('question', title);
+    formData.append('user_id', session.data.session?.user.id!);
 
     const res = await fetch('http://127.0.0.1:5000/api/attempt', {
       method: 'POST',
