@@ -55,7 +55,7 @@ const Hero = () => {
       >
         <Button className="flex items-center gap-2 px-6 py-3 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all hover:shadow-xl">
           <Link to="/login">
-            Sign In
+            Start Practicing
           </Link>
         </Button>
       </motion.div>
