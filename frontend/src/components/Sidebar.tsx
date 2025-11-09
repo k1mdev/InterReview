@@ -66,9 +66,14 @@ const Sidebar = () => {
         {attempts.map((attempt) => {
           const isSelected = attempt.attempt_id === selectedId;
           return (
-            <div
+            <Link
               key={attempt.attempt_id}
-              onClick={() => setSelectedId(isSelected ? null : attempt.attempt_id)}
+              to={`/analysis/${attempt.attempt_id}`}
+              onClick={() => {
+                const newSelectedId = isSelected ? null : attempt.attempt_id;
+                setSelectedId(newSelectedId);
+                console.log("Selected ID:", newSelectedId); // <-- log here
+              }}
               className={`
                 p-2 rounded mb-2 cursor-pointer
                 ${isSelected ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-100 hover:bg-gray-200"}
@@ -78,7 +83,7 @@ const Sidebar = () => {
               title={attempt.question}
             >
               {attempt.question}
-            </div>
+            </Link>
           );
         })}
         {attempts.length === 0 && (
