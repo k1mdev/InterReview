@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router";
 import { useAuth } from '@/auth/AuthProvider';
 
 const Login = () => {
-  const { logIn, logInWithGoogle, isLoading } = useAuth();
+  const { logIn, logInWithGoogle, isLoading, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (user) {
+      navigate('/create');
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,18 +22,16 @@ const Login = () => {
       const { error } = await logIn(email, password);
       if (error) { 
         setError(error.message);
+      } else {
+        navigate('/create');
       }
-      else {
-        navigate('/create')
-      }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
     }
   };
 
-  const handleGoogleLogin = () => {
-    logInWithGoogle();
+  const handleGoogleLogin = async () => {
+    await logInWithGoogle();
     navigate('/create');
   };
 
@@ -89,7 +92,6 @@ const Login = () => {
             Continue with Google
           </button>
 
-          {/* 👇 Added link to Sign Up page */}
           <p className="text-center text-sm text-gray-600 mt-4">
             Don’t have an account?{' '}
             <a
@@ -103,8 +105,6 @@ const Login = () => {
       </div>
     </div>
   );
-
-
 };
 
 export default Login;

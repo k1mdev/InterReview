@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useAuth } from '@/auth/AuthProvider';
 import { motion } from 'framer-motion';
 
@@ -40,6 +40,8 @@ const Sidebar = () => {
   fetchAttempts();
 }, [user, getSession]);
 
+  const navigate = useNavigate();
+
 
 
   return (
@@ -56,10 +58,11 @@ const Sidebar = () => {
         className="shrink-0 px-5 py-6 border-b border-indigo-100/60 backdrop-blur-sm bg-white/70 flex items-center justify-between"
       >
         <motion.h1
-          className="text-2xl font-extrabold tracking-tight"
+          className="text-2xl font-extrabold tracking-tight cursor-pointer select-none"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
+          onClick={() => navigate('/')}
         >
           <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Inter
@@ -80,7 +83,7 @@ const Sidebar = () => {
             to="/create"
             className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-md font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-shadow"
           >
-            <span className='text-sm font-medium text-white'>Add Attempt</span>
+            <span className='text-sm font-medium text-white select-none'>Add Attempt</span>
             <IconPlus className="w-5 h-5" />
           </Link>
         </div>
@@ -119,20 +122,20 @@ const Sidebar = () => {
           );
         })}
         {attempts.length === 0 && (
-          <div className="text-xs text-gray-500 italic">No attempts yet.</div>
+          <div className="text-xs text-gray-500 select-none italic">No attempts yet.</div>
         )}
       </div>
 
       <div className="px-5 py-5 border-t border-indigo-100/60 bg-white/60 backdrop-blur-sm text-xs text-gray-600 space-y-2">
-        <div className="truncate">Signed in as {user?.email}</div>
+        <div className="truncate select-none">Signed in as {user?.email}</div>
         <Button
           variant="outline"
           onClick={logOut}
-          className="w-full border-red-500 text-red-600 hover:bg-red-50 hover:border-red-600 transition-colors"
+          className="w-full border-red-500 text-red-600 hover:bg-red-50 hover:border-red-600 cursor-pointer transition-colors"
         >
           Log Out
         </Button>
-        <div className="pt-2 text-[10px] text-gray-400">© {new Date().getFullYear()} InterReview</div>
+        <div className="pt-2 text-[10px] text-gray-400 select-none">© {new Date().getFullYear()} InterReview</div>
       </div>
     </aside>
   );
