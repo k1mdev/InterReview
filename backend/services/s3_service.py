@@ -1,5 +1,6 @@
 from io import BytesIO
 import boto3
+import base64
 
 s3 = boto3.client('s3')
 BUCKET_NAME = "interreview-audio-storage"
@@ -21,11 +22,14 @@ def upload_audio(file, uuid, user_id):
 
 def get_audio(uuid, user_id):
     """
-    Fetches an audio clip from the bucket.
+    Fetches an audio clip from the bucket and returns it as a base64 encoded string.
     
     Parameters:
         uuid (UUID): The UUID of the audio file.
         user_id (str): The user ID who generated this recording.
+        
+    Returns:
+        str: Base64 encoded audio data with mime type prefix
     """
     try:
         buffer = BytesIO()
@@ -35,6 +39,7 @@ def get_audio(uuid, user_id):
             buffer
         )
         file_content = buffer.getvalue()
-        return file_content
+        encoded = base64.b64encode(file_content).decode('utf-8')
+        return f"data:audio/mpeg;base64,{encoded}"
     except Exception as e:
-        raise Exception("Error fetching file from S3: {e}")
+        raise Exception(f"Error fetching file from S3: {e}")

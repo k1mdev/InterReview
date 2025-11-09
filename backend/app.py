@@ -3,7 +3,6 @@ import uuid
 from services import gemini_service_simple, db_service, s3_service
 
 from flask import Flask, g, request, jsonify
-import filetype
 
 app = Flask(__name__)
 
@@ -37,12 +36,16 @@ def attempt():
             if not user_id:
                 return jsonify({'status': 'error', 'message': 'Missing user_id.'}), 400
 
-            # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
-            head = file.read(261)
-            kind = filetype.guess(head)
-            file.seek(0)
-            if not kind or kind.mime not in ['audio/mpeg', 'audio/wav']:
-                return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
+            # # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
+            # head = file.read(261)
+            # kind = filetype.guess(head)
+            # file.seek(0)
+            # if not kind or kind.mime not in ['audio/mpeg', 'audio/wav']:
+            print(file.mimetype)
+            if file.mimetype not in ['audio/mp4', 'audio/mpeg', 'audio/wav']:
+                # print(file.name)
+                # if not file.name.endswith('.m4a'):
+                    return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
             
             import tempfile
             # Save uploaded audio temporarily to a file
@@ -95,9 +98,9 @@ def attempt():
                 user_id = request.args.get('user_id')
                 # fetch attempt from DB
                 res = db_service.get_attempt_by_id(attempt_id)
-                # get audio file
-                audio_file = s3_service.get_audio(attempt_id, user_id)
-                res['audio'] = audio_file
+                # get audio file as base64
+                audio_data = s3_service.get_audio(attempt_id, user_id)
+                res['audio'] = audio_data
                 return jsonify({'status': 'success', 'data': res}), 200
             elif request.args.get('user_id') is not None:
                 # if only the user_id is specified, then retrieve all attempts associated with the user

@@ -20,9 +20,9 @@ def save_attempt(uuid, question, answer, feedback, user_id, created):
     conn = get_connection()
     with conn.cursor() as cur:
         query = """
-            INSERT INTO Attempt (attempt_id, question, answer, feedback, user_id, created) VALUES (%s, %s, %s, %s, %s);
+            INSERT INTO Attempt (attempt_id, question, answer, feedback, user_id, created) VALUES (%s, %s, %s, %s, %s, %s);
         """
-        cur.execute(query, (uuid, question, answer, feedback, user_id, created))
+        cur.execute(query, (str(uuid), question, answer, feedback, user_id, created))
     conn.commit()
 
 def get_attempts_by_user_id(user_id):
