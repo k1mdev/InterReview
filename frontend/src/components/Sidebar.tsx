@@ -5,26 +5,41 @@ import { Link } from "react-router"
 import { useAuth } from '@/auth/AuthProvider';
 
 const Sidebar = () => {
+  const { getSession } = useAuth();
   const { logOut, user } = useAuth();
   interface Attempt {
     attempt_id: string;
     question: string;
+
   }
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) return;
-    const uid = (user as any).id || (user as any).user_id || user.email;
-    fetch(`/api/attempt?user_id=${encodeURIComponent(uid)}`)
-      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
-      .then(json => {
-        if (json.status === 'success' && Array.isArray(json.data)) {
-          setAttempts(json.data);
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+  if (!user) return;
+
+  const fetchAttempts = async () => {
+    try {
+      const session = await getSession();
+      const uid = session?.data?.session?.user?.id;
+      if (!uid) return;
+
+      const res = await fetch(`http://localhost:5000/api/attempt?user_id=${encodeURIComponent(uid)}`);
+
+      const json = await res.json();
+
+      if (json.status === 'success' && Array.isArray(json.data)) {
+        setAttempts(json.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  fetchAttempts();
+}, [user]);
+
+
 
   return (
     <div
