@@ -1,23 +1,34 @@
+import { useAuth } from '@/auth/AuthProvider';
 import MainLayout from '@/layouts/MainLayout'
 import React, { useEffect, useState } from 'react'
+import { useParams } from "react-router";
+
 
 const Analysis = () => {
-
+  const { getSession } = useAuth();
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<string | null>(null);
+  const { attemptId } = useParams()
 
 
   useEffect(() => {
     const fetchAttempt = async () => {
       try {
-        const params = new URLSearchParams({ attempt_id: attemptId, user_id: userId });
+        
+        const session = await getSession();
+        const userId = session.data.session?.user.id;
+        const params = new URLSearchParams({
+          attempt_id: attemptId ?? '',
+          user_id: userId?.toString() ?? '',
+        });
+        console.log(userId, attemptId)
+        // const params = new URLSearchParams({ attempt_id: attemptId.toString(), user_id: userId });
         const res = await fetch(`http://127.0.0.1:5000/api/attempt${params.toString()}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({}),
         });
         const data = await res.json();
         const {
@@ -40,28 +51,28 @@ const Analysis = () => {
       }
     };
     fetchAttempt();
-  }, []);
+  }, [attemptId, getSession]);
 
   return (
     <>
       <MainLayout>
         <div className="flex flex-col items-center justify-center h-screen pt-[25vh]">
-            <span className='absolute top-1/18 flex flex-col items-center p-0 m-0'>
-                <textarea className='rounded-2xl border-2 w-[45vw] h-[13vh] p-7 text-2xl resize-none' defaultValue="QUESTION HERE" readOnly/>
-                <audio className='p-2' controls src={audioSrc} />
-            </span>
-            
-            <div className='mb-4'>
-                <p>You responded:</p>
-                <textarea className='rounded-2xl border-2 w-[55vw] h-[20vh] p-7 text-sm resize-none' defaultValue={transcript ? transcript : 'Transcript'} readOnly/>
-            </div>
+          <span className='absolute top-1/18 flex flex-col items-center p-0 m-0'>
+            <textarea className='rounded-2xl border-2 w-[45vw] h-[13vh] p-7 text-2xl resize-none' defaultValue="QUESTION HERE" readOnly />
+            <audio className='p-2' controls src={audioSrc} />
+          </span>
 
-            <textarea className='rounded-2xl border-2 w-[65vw] h-[40vh] p-7 text-sm resize-none' defaultValue={"HIGHLIGHTS HERE"} readOnly/>
+          <div className='mb-4'>
+            <p>You responded:</p>
+            <textarea className='rounded-2xl border-2 w-[55vw] h-[20vh] p-7 text-sm resize-none' defaultValue={transcript ? transcript : 'Transcript'} readOnly />
+          </div>
+
+          <textarea className='rounded-2xl border-2 w-[65vw] h-[40vh] p-7 text-sm resize-none' defaultValue={"HIGHLIGHTS HERE"} readOnly />
         </div>
 
 
       </MainLayout>
-    </>  )
+    </>)
 }
 
 export default Analysis
