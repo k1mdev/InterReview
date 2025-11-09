@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
-from services import gemini_service, db_service, s3_service
 import uuid
+from services import gemini_service_simple, db_service, s3_service
 
 from flask import Flask, g, request, jsonify
 import filetype
@@ -24,42 +24,57 @@ def attempt():
             # get timestamp before any processing begins
             timestamp = datetime.now(timezone.utc)
 
-            # validate file type is mp3 or wav
+            # Inputs
             file = request.files.get('file')
-            kind = filetype.guess(file.read(261)) 
-            file.seek(0)
-            if not kind or not kind.mime in ['mp3', 'wav']:
-                return jsonify({'status': 'error', 'message': 'Invalid file type. File must be a .mp3 or .wav.'}), 415
-            
-            # get feedback from Gemini
             question = request.form.get('question')
-            analysis = gemini_service.analyze_interview(question, file)
-
-            # generate a key to use for the S3 bucket and the pkey of the Attempt record
-            _uuid = uuid.uuid4()
             user_id = request.form.get('user_id')
 
+            # Basic validation
+            if not file:
+                return jsonify({'status': 'error', 'message': 'Missing audio file.'}), 400
+            if not question:
+                return jsonify({'status': 'error', 'message': 'Missing question.'}), 400
+            if not user_id:
+                return jsonify({'status': 'error', 'message': 'Missing user_id.'}), 400
+
+            # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
+            head = file.read(261)
+            kind = filetype.guess(head)
+            file.seek(0)
+            if not kind or kind.mime not in ['audio/mpeg', 'audio/wav']:
+                return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
+            
+            # get feedback from Gemini
+            analysis = gemini_service_simple.evaluate_response(question, file)
+            if 'error' in analysis:
+                return jsonify({'status': 'error', 'message': f"Gemini error: {analysis['error']}"}), 502
+
+            # generate a key to use for the S3 bucket and the pkey of the Attempt record
+            attempt_uuid = uuid.uuid4()
+
             # save to bucket
-            s3_service.upload_audio(file, _uuid, user_id)
+            # reset pointer in case Gemini consumed it
+            try:
+                file.seek(0)
+            except Exception:
+                pass
+            s3_service.upload_audio(file, attempt_uuid, user_id)
 
             # identify the user's answer as text and Gemini's feeback as JSON
-            answer = analysis.transcript
-            feedback = {
-                "overall_feedback": analysis.overall_feedback,
-                "timestamped_feedback": analysis.timestamped_feedback
-            }
+            answer = analysis.get('transcription', '')
+            feedback = analysis.get('feedback')
 
             # save attempt to DB
-            db_service.save_attempt(_uuid, question, answer, feedback, user_id, timestamp)
+            db_service.save_attempt(attempt_uuid, question, answer, feedback, user_id, timestamp)
 
             data = {
-                "attempt_id": attempt_id,
+                "attempt_id": str(attempt_uuid),
                 "question": question,
                 "answer": answer,
-                "answer": feedback,
+                "feedback": feedback,
                 "user_id": user_id,
-                "created": timestamp,
-                "audio": s3_service.get_audio(attempt_id, user_id)
+                "created": timestamp.isoformat(),
+                "audio": s3_service.get_audio(attempt_uuid, user_id)
             }
 
             return jsonify({'status': 'success', 'data': data}), 200
