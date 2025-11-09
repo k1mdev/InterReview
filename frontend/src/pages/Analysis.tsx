@@ -110,7 +110,7 @@ const Analysis = () => {
         <div className="mb-4 w-[55vw]">
           <p className="font-semibold mb-2">You responded:</p>
           <i><textarea
-            className=" w-full p-7 text-sm resize-none"
+            className="text-center w-full p-7 text-sm resize-none"
             value={("\"" + transcript + "\"") || 'Transcript'}
             readOnly
           /></i>
