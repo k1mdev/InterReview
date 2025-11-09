@@ -99,7 +99,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logOut = async (): Promise<void> => {
     await supabase.auth.signOut();
-    window.location.reload();
   };
 
   const sendPasswordResetEmail = async (
