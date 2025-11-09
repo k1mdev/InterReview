@@ -3,7 +3,6 @@ import uuid
 from services import gemini_service_simple, db_service, s3_service
 
 from flask import Flask, g, request, jsonify
-import filetype
 
 app = Flask(__name__)
 
@@ -37,12 +36,16 @@ def attempt():
             if not user_id:
                 return jsonify({'status': 'error', 'message': 'Missing user_id.'}), 400
 
-            # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
-            head = file.read(261)
-            kind = filetype.guess(head)
-            file.seek(0)
-            if not kind or kind.mime not in ['audio/mpeg', 'audio/wav']:
-                return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
+            # # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
+            # head = file.read(261)
+            # kind = filetype.guess(head)
+            # file.seek(0)
+            # if not kind or kind.mime not in ['audio/mpeg', 'audio/wav']:
+            print(file.mimetype)
+            if file.mimetype not in ['audio/mp4', 'audio/mpeg', 'audio/wav']:
+                # print(file.name)
+                # if not file.name.endswith('.m4a'):
+                    return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
             
             # get feedback from Gemini
             analysis = gemini_service_simple.evaluate_response(question, file)
