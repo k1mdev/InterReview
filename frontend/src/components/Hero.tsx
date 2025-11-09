@@ -4,7 +4,7 @@ import { Link } from "react-router"
 
 const Hero = () => {
   return (
-    <section className="relative flex flex-col items-center justify-center text-center min-h-screen bg-gradient-to-b from-white to-gray-50 overflow-hidden px-6">
+    <section className="relative flex flex-col items-center justify-center text-center min-h-screen bg-gradient-to-b from-white to-gray-50 overflow-hidden px-6 select-none">
       {/* Soft gradient and glowing blobs */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-white to-transparent" />
       <div className="absolute top-10 left-20 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-40 animate-pulse" />
