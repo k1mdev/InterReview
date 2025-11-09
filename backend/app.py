@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
 import uuid
-from services import gemini_service_simple, db_service, s3_service
+from services import gemini_service, db_service, s3_service
 
 from flask import Flask, g, request, jsonify
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5173"])
 
 @app.teardown_appcontext
 def close_connection(e):
@@ -23,12 +26,11 @@ def attempt():
             # get timestamp before any processing begins
             timestamp = datetime.now(timezone.utc)
 
-            # Inputs
+            # inputs
             file = request.files.get('file')
             question = request.form.get('question')
             user_id = request.form.get('user_id')
 
-            # Basic validation
             if not file:
                 return jsonify({'status': 'error', 'message': 'Missing audio file.'}), 400
             if not question:
@@ -36,18 +38,18 @@ def attempt():
             if not user_id:
                 return jsonify({'status': 'error', 'message': 'Missing user_id.'}), 400
 
-            # # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
+            # validate file type is mp3 or wav (MIME values: audio/mpeg, audio/wav)
             if not file.mimetype.startswith('audio/'):
                     return jsonify({'status': 'error', 'message': 'Invalid file type. Must be MP3 or WAV.'}), 415
             
             import tempfile
-            # Save uploaded audio temporarily to a file
+            # save uploaded audio temporarily to a file
             with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
                 file.save(tmp.name)
                 tmp_path = tmp.name  # path to the saved file
 
-            # Evaluate with Gemini using the temp file path
-            analysis = gemini_service_simple.evaluate_response(question, tmp_path)
+            # pass question and temp file path to Gemini
+            analysis = gemini_service.evaluate_response(question, tmp_path)
             if 'error' in analysis:
                 return jsonify({'status': 'error', 'message': f"Gemini error: {analysis['error']}"}), 502
 
@@ -63,7 +65,7 @@ def attempt():
             s3_service.upload_audio(file, attempt_uuid, user_id)
 
             # identify the user's answer as text and Gemini's feeback as JSON
-            answer = analysis.get('transcription', '')
+            answer = analysis.get('transcription')
             feedback = analysis.get('feedback')
 
             # save attempt to DB
@@ -102,6 +104,8 @@ def attempt():
                 # fetch attempts from DB
                 res = db_service.get_attempts_by_user_id(user_id)
                 return jsonify({'status': 'success', 'data': res}), 200
+            else:
+                jsonify({'status': 'error', 'message': f'Invalid request.'}), 500
             
         except Exception as e:
             return jsonify({'status': 'error', 'message': f'Error fetching from DB: {e}'}), 500
