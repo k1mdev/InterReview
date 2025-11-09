@@ -64,6 +64,9 @@ export default function Recorder({ title }: { title: string }) {
     setError('');
 
     try {
+      if (title.length == 0) {
+        throw Error("You must set a question before submitting.")
+      }
       const response = await fetch(recordedURL);
       const blob = await response.blob();
       const session = await getSession();
@@ -86,7 +89,7 @@ export default function Recorder({ title }: { title: string }) {
         setError('An error occurred while submitting your response.');
       }
     } catch (err) {
-      setError('An error occurred while submitting your response.');
+      setError(err?.message! || 'An error occurred while submitting your response.');
     } finally {
       setIsSubmitting(false);
     }
@@ -100,7 +103,8 @@ export default function Recorder({ title }: { title: string }) {
             {`${padnum(Math.floor(seconds / 6000), 2)}:${padnum(Math.floor(seconds / 100 % 60), 2)}:${padnum(seconds % 100, 2)}`}
           </div>
           <Button
-            variant="secondary"
+            className='bg-gray-50 hover:bg-gray-100 text-black cursor-pointer rounded-full transition-all'
+            variant="outline"
             onClick={stopRecording}
           >
             <IconPlayerStop /> Stop Recording
@@ -109,7 +113,8 @@ export default function Recorder({ title }: { title: string }) {
       ) : (
         <div className='flex items-center justify-center'>
           <Button
-            variant="default"
+            className='flex items-center gap-2 px-6 py-3 text-lg bg-gray-50 hover:bg-gray-100 text-black cursor-pointer rounded-full transition-all'
+            variant="outline"
             onClick={startRecording}
           >
             {recordedURL ? 'Re-' : ''}Record Your Response
@@ -122,7 +127,8 @@ export default function Recorder({ title }: { title: string }) {
         <>
           <audio className='p-2' controls src={recordedURL} />
           <Button
-            variant="secondary"
+            className='flex items-center gap-2 px-6 py-3 text-lg bg-gray-50 hover:bg-gray-100 text-black cursor-pointer rounded-full transition-all'
+            variant="outline"
             onClick={submitAudio}
             disabled={isSubmitting}
           >
